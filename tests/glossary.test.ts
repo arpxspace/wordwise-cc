@@ -116,7 +116,7 @@ const ENGINE = { type: 'engine', ref: 0 } as const
 test('draws terms underlined, with a hidden card, in the fullscreen terminal', async ($, on) => {
   on('ui.render', { component: 'AssistantMessage' }, () => ENGINE)
   const ui = await $.ui.mount({
-    plugin: 'glossary-hover',
+    plugin: 'wordwise-claude-code',
     surface: 'terminal',
     component: 'AssistantMessage',
     props: { text: REPLY, isFirstOfReply: true },
@@ -139,7 +139,7 @@ test('draws terms underlined, with a hidden card, in the fullscreen terminal', a
 test('leaves the reply to the engine outside fullscreen', async ($, on) => {
   on('ui.render', { component: 'AssistantMessage' }, () => ENGINE)
   const ui = await $.ui.mount({
-    plugin: 'glossary-hover',
+    plugin: 'wordwise-claude-code',
     surface: 'terminal',
     component: 'AssistantMessage',
     props: { text: REPLY, isFirstOfReply: true },
@@ -151,7 +151,7 @@ test('leaves the reply to the engine outside fullscreen', async ($, on) => {
 test('leaves a reply with no glossary block to the engine', async ($, on) => {
   on('ui.render', { component: 'AssistantMessage' }, () => ENGINE)
   const ui = await $.ui.mount({
-    plugin: 'glossary-hover',
+    plugin: 'wordwise-claude-code',
     surface: 'terminal',
     component: 'AssistantMessage',
     props: { text: 'Done.', isFirstOfReply: true },

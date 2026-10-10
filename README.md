@@ -1,4 +1,4 @@
-# glossary-hover
+# wordwise-claude-code
 
 A Claude Code mod. It hides the glossary block at the top of a reply. It
 underlines each glossary term in the reply. When your mouse rests on a term,

@@ -1,4 +1,4 @@
-// The text work of glossary-hover, with no drawing in it: find the glossary
+// The text work of wordwise-claude-code, with no drawing in it: find the glossary
 // block at the top of a reply, split the rest into blocks, mark each term,
 // and plan where every hover card goes.
 
