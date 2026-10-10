@@ -1,5 +1,16 @@
 {
-  "name": "wordwise-claude-code",
-  "version": "0.1.0",
-  "description": "Hides the glossary block at the top of a reply, underlines each term in the reply, and shows its meaning in a card on hover."
+  "name": "wordwise-cc",
+  "version": "0.2.0",
+  "description": "Hides the glossary block at the top of a reply, underlines each term in the reply, and shows its meaning in a card on hover.",
+  "author": { "name": "Amir Panahi" },
+  "repository": "https://github.com/arpxspace/wordwise-cc",
+  "license": "MIT",
+  "userConfig": {
+    "askForGlossary": {
+      "type": "boolean",
+      "title": "Ask Claude for a glossary",
+      "description": "Tell Claude to start each reply with a glossary block. Turn this off if your own CLAUDE.md already asks for one.",
+      "default": true
+    }
+  }
 }

@@ -1,0 +1,16 @@
+{
+  "name": "wordwise-cc",
+  "owner": {
+    "name": "Amir Panahi"
+  },
+  "metadata": {
+    "description": "Wordwise for Claude Code: each term in a reply, underlined, with its meaning in a card on hover."
+  },
+  "plugins": [
+    {
+      "name": "wordwise-cc",
+      "source": "./",
+      "description": "Hides the glossary block at the top of a reply, underlines each term in the reply, and shows its meaning in a card on hover."
+    }
+  ]
+}

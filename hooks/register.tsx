@@ -2,12 +2,22 @@ import type { Register, RenderNode } from 'claude-code'
 
 import { padTo, plan, shortHash, splitGlossary } from './glossary'
 import type { Card, Piece, PlanBlock, PlanLine, Style } from './glossary'
+import { GLOSSARY_RULE } from './rule'
 
 // Draws a reply that opens with a glossary block without the block: each term
 // in the text is underlined, and the pointer resting on one opens a card with
 // its meaning. Only the fullscreen terminal reports the pointer, so every
 // other drawing is left to the engine, glossary block and all.
-export const register: Register = on => {
+export const register: Register = (on, options) => {
+  // The rule goes in the system prompt, so Claude writes the block in every
+  // session. Turned off in /config, Claude writes it only if CLAUDE.md asks.
+  if (options.askForGlossary !== false) {
+    on('prompt.compose', async ($, e, next) => {
+      const composed = await next(e)
+      return { sections: [...composed.sections, { id: 'wordwise-cc:glossary', text: GLOSSARY_RULE, scope: 'session' }] }
+    })
+  }
+
   on('ui.render', { component: 'AssistantMessage' }, async ($, e, next) => {
     if (e.surface !== 'terminal' || e.viewport?.isFullscreen !== true || e.props.isSummary) {
       return next(e)
@@ -21,7 +31,7 @@ export const register: Register = on => {
     // Two cells for the bullet, one spare so a line never touches the edge.
     const width = Math.max(20, e.viewport.columns - 3)
     const { blocks } = plan(glossary, width, e.props.onScreen ?? null)
-    const prefix = `gh${shortHash(e.requestId)}-`
+    const prefix = `ww${shortHash(e.requestId)}-`
 
     // Only the styles a piece has: a prop left undefined is not sent.
     const textProps = (style: Style, isHeading: boolean) => {

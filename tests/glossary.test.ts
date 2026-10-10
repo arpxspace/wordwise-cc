@@ -1,6 +1,7 @@
 import { expect, test } from 'claude-code/testing'
 
 import { findTerms, parseInline, plan, splitGlossary } from '../hooks/glossary'
+import { GLOSSARY_RULE } from '../hooks/rule'
 
 const REPLY = [
   '---',
@@ -116,7 +117,7 @@ const ENGINE = { type: 'engine', ref: 0 } as const
 test('draws terms underlined, with a hidden card, in the fullscreen terminal', async ($, on) => {
   on('ui.render', { component: 'AssistantMessage' }, () => ENGINE)
   const ui = await $.ui.mount({
-    plugin: 'wordwise-claude-code',
+    plugin: 'wordwise-cc',
     surface: 'terminal',
     component: 'AssistantMessage',
     props: { text: REPLY, isFirstOfReply: true },
@@ -139,7 +140,7 @@ test('draws terms underlined, with a hidden card, in the fullscreen terminal', a
 test('leaves the reply to the engine outside fullscreen', async ($, on) => {
   on('ui.render', { component: 'AssistantMessage' }, () => ENGINE)
   const ui = await $.ui.mount({
-    plugin: 'wordwise-claude-code',
+    plugin: 'wordwise-cc',
     surface: 'terminal',
     component: 'AssistantMessage',
     props: { text: REPLY, isFirstOfReply: true },
@@ -151,11 +152,37 @@ test('leaves the reply to the engine outside fullscreen', async ($, on) => {
 test('leaves a reply with no glossary block to the engine', async ($, on) => {
   on('ui.render', { component: 'AssistantMessage' }, () => ENGINE)
   const ui = await $.ui.mount({
-    plugin: 'wordwise-claude-code',
+    plugin: 'wordwise-cc',
     surface: 'terminal',
     component: 'AssistantMessage',
     props: { text: 'Done.', isFirstOfReply: true },
     viewport: FULLSCREEN,
   })
   expect(await ui.drawn()).toMatchObject({ type: 'engine' })
+})
+
+const COMPOSE = {
+  model: 'claude-opus-5-5',
+  promptModel: 'claude-opus-5-5',
+  surfaces: ['terminal'] as const,
+  tools: [],
+  outputStyle: null,
+  traits: [],
+}
+const INTRO = { id: 'intro', text: 'You are Claude Code.', scope: 'shared' } as const
+
+test('adds the glossary rule to the system prompt', async ($, on) => {
+  on('prompt.compose', () => ({ sections: [INTRO] }))
+  const { sections } = await $.prompt.compose(COMPOSE)
+  expect(sections).toEqual([INTRO, { id: 'wordwise-cc:glossary', text: GLOSSARY_RULE, scope: 'session' }])
+})
+
+test('leaves the system prompt alone with askForGlossary off', { options: { askForGlossary: false } }, async ($, on) => {
+  on('prompt.compose', () => ({ sections: [INTRO] }))
+  expect((await $.prompt.compose(COMPOSE)).sections).toEqual([INTRO])
+})
+
+test("finds the terms in the rule's own example block", () => {
+  const example = GLOSSARY_RULE.slice(GLOSSARY_RULE.indexOf('---'))
+  expect(splitGlossary(example)?.terms.map(t => t.term)).toEqual(['loader script', 'CSV'])
 })
